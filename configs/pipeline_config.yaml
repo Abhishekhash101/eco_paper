@@ -1,0 +1,57 @@
+# =============================================================================
+# Phase 1: Data Engineering Pipeline Configuration
+# Latent Policy Stance Research — Central Bank Speeches (CBS)
+# =============================================================================
+
+corpus:
+  source_file: "CBS_dataset_v1.0.rds"
+  language_filter: "English"
+  min_text_length: 500  # chars — exclude very short texts
+  date_range:
+    start: null  # Will be constrained by market data availability
+    end: null
+  
+segmentation:
+  # Chunk types: paragraph, sentence
+  chunk_types: ["paragraph", "sentence"]
+  # spaCy model for sentence segmentation
+  spacy_model: "en_core_web_sm"
+  # Max tokens per chunk (for transformer input compatibility)
+  max_chunk_tokens: 512
+  # Min tokens per chunk (skip trivially short chunks)
+  min_chunk_tokens: 20
+  # Economic-domain tokenization overrides
+  no_split_patterns:
+    - '\d+\.\d+%'     # e.g., 2.25%
+    - 'Q[1-4]\s\d{4}' # e.g., Q3 2022
+    - '\d{4}-\d{4}'   # e.g., 2022-2024
+    - 'H[12]\s\d{4}'  # e.g., H1 2023
+
+market_data:
+  # Placeholder — user will provide tick data
+  data_directory: "data/market"
+  # Event window parameters (minutes relative to speech timestamp)
+  event_window:
+    pre_minutes: 15
+    post_minutes: 60
+  # Label computation window
+  label_window:
+    pre_reference_minutes: 1  # last pre-release price
+    post_peak_minutes: 30     # peak post-release price
+  # Primary label: sovereign bond yield change (basis points)
+  primary_label: "delta_yield_2y_bp"
+  # Secondary labels
+  secondary_labels:
+    - "delta_equity_pct"
+    - "delta_curve_slope_bp"
+
+output:
+  processed_dir: "data/processed"
+  corpus_file: "corpus_english.parquet"
+  chunk_registry_file: "chunk_registry.parquet"
+  document_registry_file: "document_registry.parquet"
+  labels_file: "event_labels.parquet"
+
+reproducibility:
+  random_seed: 42
+  hash_algorithm: "sha256"
