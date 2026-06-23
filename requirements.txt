@@ -11,6 +11,10 @@ PyPDF2==3.0.1
 spacy==3.5.4
 tqdm==4.66.2
 
+# Market Data
+yfinance==0.2.36
+pandas-datareader==0.10.0
+
 # ML / NLP
 tensorflow==2.10.0
 transformers==4.30.2
