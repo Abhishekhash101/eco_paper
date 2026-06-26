@@ -64,3 +64,7 @@ wandb/
 # ─── Misc ─────────────────────────────────────────────────────────────────────
 *.log
 *.tmp
+
+# Large dataset files
+notebooks/*.csv
+*.csv
